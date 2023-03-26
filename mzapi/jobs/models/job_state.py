@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 
-class JobStage(Enum):
+class JobStages(Enum):
     INITIAL = 0
     DOWNLOAD = 1
     CONVERTING = 2

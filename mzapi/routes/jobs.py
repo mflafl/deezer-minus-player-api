@@ -10,4 +10,4 @@ router = APIRouter()
 @router.get("/job/{job_id}")
 async def get_job(job_id: str):
     result = AsyncResult(job_id)
-    return JobState(job_id=result.id, progress=result.info.progress, stage=result.info.stage)
+    return JobState(job_id=result.id, progress=result.info['progress'], stage=result.info['stage'])

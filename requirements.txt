@@ -7,3 +7,4 @@ spleeter==2.3.2
 SQLAlchemy==2.0.7
 psycopg==3.1.8
 redis==4.5.3
+uvicorn==0.21.1

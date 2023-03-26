@@ -5,7 +5,7 @@ import soundfile as sf
 
 class DeezerSpleeter:
     @staticmethod
-    def spleet(track_id):
+    def spleet(track_id, task_id = None):
         # Set the input file path and the output directory path
         input_file = f"{os.environ['DOWNLOAD_PATH']}/{track_id}/{track_id}.flac"
         output_dir = f"{os.environ['DOWNLOAD_PATH']}/{track_id}"
