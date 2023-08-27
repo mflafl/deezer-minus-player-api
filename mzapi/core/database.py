@@ -12,5 +12,8 @@ class Database:
     def get_session(self):
         return Session(bind=self.engine)
 
+    def get_db(self):
+        return self.engine
+
 
 database = Database()

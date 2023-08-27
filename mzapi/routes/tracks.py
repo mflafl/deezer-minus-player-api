@@ -1,10 +1,22 @@
-from fastapi import APIRouter, Header
+from typing import List
+
+from fastapi import APIRouter, Header, Depends, Response
+from sqlalchemy.orm import Session
+
 from .schemas import StemConfiguration
+from mzapi.core.database import database
 from mzapi.jobs.save_track_stems import save_track_stems
 from mzapi.jobs.models.job_state import JobState
-import deezer
+from ..models.track import Track
 
 router = APIRouter()
+
+
+@router.get("/tracks", response_model=None)
+async def get_tracks():
+    db: Session = database.get_session()
+    tracks = db.query(Track).all()
+    return tracks
 
 
 @router.post("/tracks/{track_id}/stem")
@@ -15,25 +27,3 @@ async def create_item(track_id: int, config: StemConfiguration,
 
     result = save_track_stems.delay(track_id=track_id, deezer_arl_token=deezer_arl_token, config=dict(config))
     return JobState(job_id=result.id, progress=0, stage=0)
-
-
-@router.get('/tracks/{track_id}')
-async def get_track_by_id(track_id: int, deezer_arl_token: str = Header(None, alias="X-DEEZER-ARL-TOKEN")):
-    dz = deezer.Deezer()
-    dz.login_via_arl(arl=deezer_arl_token)
-    track = dz.api.get_track(track_id)
-    return track
-
-
-@router.get('/favorites')
-async def get_user_favorite_tracks(deezer_arl_token: str = Header(None, alias="X-DEEZER-ARL-TOKEN")):
-    dz = deezer.Deezer()
-    dz.login_via_arl(arl=deezer_arl_token)
-    user = dz.get_session()['current_user']
-    user_playlists = dz.api.get_user_playlists(user['id'])
-    favorites_playlist = next(
-        (playlist for playlist in user_playlists['data'] if playlist['title'] == "Loved tracks"), None
-    )
-
-    favorites_tracks = dz.api.get_playlist_tracks(favorites_playlist['id'])
-    return favorites_tracks
